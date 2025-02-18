@@ -1,4 +1,5 @@
 import axios from "axios";
+import { formatWhereClause } from "../helpers/formatHelpers";
 
 const BASE_URL = "https://services.nconemap.gov/secure/rest/services/NC1Map_Parcels/MapServer/1/query";
 
@@ -8,12 +9,12 @@ export const searchParcels = async (query, field = "ownname") => {
         const response = await axios.get(BASE_URL, {
             params: {
                 f: "json",
-                where: `${field} LIKE '%${query}%'`,
+                where: formatWhereClause(query, field),
                 outFields: "*",
-                returnGeometry: true
+                returnGeometry: true,
             }
         });
-
+        console.log(response.data.features);
         return response.data.features || [];
     } catch (error) {
         console.error("API request failed:", error);
@@ -22,7 +23,7 @@ export const searchParcels = async (query, field = "ownname") => {
 };
 
 // Function to fetch nearby parcels
-export const getNearbyParcels = async (selectedParcel, bufferFeet = 1500) => {
+export const getNearbyParcels = async (selectedParcel, bufferFeet = 2500) => {
     if (!selectedParcel || !selectedParcel.geometry || !selectedParcel.geometry.rings) {
         return [];
     }
@@ -60,7 +61,7 @@ export const getNearbyParcels = async (selectedParcel, bufferFeet = 1500) => {
         let parcels = response.data.features || [];
 
         // 🔥 Filter out the selected parcel
-        parcels = parcels.filter(parcel => parcel.attributes.altparno !== selectedParcel.attributes.altparno);
+        parcels = parcels.filter(parcel => parcel.attributes.objectid !== selectedParcel.attributes.objectid);
 
         return parcels;
     } catch (error) {

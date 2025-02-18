@@ -1,7 +1,8 @@
 import { MapContainer, TileLayer, Polygon, Popup, useMap } from "react-leaflet";
 import { useEffect } from "react";
 import proj4 from "proj4";
-import numToTwoDecimals from "../helpers/formatHelpers";
+import { numToTwoDecimals } from "../helpers/formatHelpers";
+import { countyGISMap } from "../helpers/fields";
 
 // Define NC State Plane (EPSG:102719 → EPSG:4326)
 proj4.defs("EPSG:102719", "+proj=lcc +lat_1=36.16666666666666 +lat_2=34.33333333333334 +lat_0=33.75 +lon_0=-79 +x_0=609601.22 +y_0=0 +datum=NAD83 +units=us-ft +no_defs");
@@ -42,10 +43,12 @@ const ParcelMap = ({ selectedParcel, nearbyParcels }) => {
                         positions={convertCoordinates(selectedParcel.geometry.rings)}
                         color="blue" weight={3}
                     >
-                        <Popup>
+                        <Popup autoOpen>
                             <strong>{selectedParcel.attributes.ownname}</strong><br />
-                            Parcel ID: {selectedParcel.attributes.altparno}<br />
-                            Acres: {numToTwoDecimals(selectedParcel.attributes.gisacres)}
+                            Parcel ID: {selectedParcel.attributes.parno || selectedParcel.attributes.altparno}<br />
+                            Acres: {numToTwoDecimals(selectedParcel.attributes.gisacres)}<br />
+                            County: {selectedParcel.attributes.cntyname}<br />
+                            <a href={countyGISMap[selectedParcel.attributes.cntyname]} target="_blank">County GIS</a>
                         </Popup>
                     </Polygon>
                 </>
@@ -57,17 +60,19 @@ const ParcelMap = ({ selectedParcel, nearbyParcels }) => {
                     <Polygon
                         key={index}
                         positions={convertCoordinates(parcel.geometry.rings)}
-                        color="green" weight={1} fillOpacity={0.5}
+                        color="green" weight={0.5} fillOpacity={0.1}
                     >
                         <Popup>
                             <strong>{parcel.attributes.ownname}</strong><br />
-                            Parcel ID: {parcel.attributes.altparno}<br />
-                            Acres: {numToTwoDecimals(parcel.attributes.gisacres)}
+                            Parcel ID: {parcel.attributes.parno || parcel.attributes.altparno}<br />
+                            Acres: {numToTwoDecimals(parcel.attributes.gisacres)}<br />
+                            County: {parcel.attributes.cntyname}<br />
+                            <a href={countyGISMap[parcel.attributes.cntyname]} target="_blank">County GIS</a>
                         </Popup>
                     </Polygon>
                 )
             ))}
-        </MapContainer>
+        </MapContainer >
     );
 };
 
