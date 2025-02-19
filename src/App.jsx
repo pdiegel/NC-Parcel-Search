@@ -16,7 +16,7 @@ function App() {
     return (
         <div>
             <ParcelSearch setSelectedParcel={handleParcelSelect} />
-            <ParcelMap selectedParcel={selectedParcel} nearbyParcels={nearbyParcels} />
+            <ParcelMap selectedParcel={selectedParcel} nearbyParcels={nearbyParcels} setSelectedParcel={handleParcelSelect} />
         </div>
     );
 }

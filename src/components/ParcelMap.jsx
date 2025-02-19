@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, Polygon, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Polygon, Popup, useMap, SVGOverlay } from "react-leaflet";
 import { useEffect } from "react";
 import proj4 from "proj4";
 import { numToTwoDecimals } from "../helpers/formatHelpers";
@@ -31,18 +31,22 @@ const MapZoomHandler = ({ selectedParcel }) => {
     return null;
 };
 
-const ParcelMap = ({ selectedParcel, nearbyParcels }) => {
+const ParcelMap = ({ selectedParcel, nearbyParcels, setSelectedParcel }) => {
     return (
-        <MapContainer center={[35.7796, -78.6382]} zoom={10} style={{ height: "100vh", width: "100%" }}>
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        <MapContainer center={[35.7796, -78.6382]} zoom={12} maxZoom={20} style={{ height: "100vh", width: "100%" }}>
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" maxZoom={20} />
 
             {selectedParcel && selectedParcel.geometry && selectedParcel.geometry.rings && (
                 <>
                     <MapZoomHandler selectedParcel={selectedParcel} />
+                    <SVGOverlay bounds={convertCoordinates(selectedParcel.geometry.rings)} className="svg-holder">
+                        <text id="pid" x="50%" y="50%" fill="black" stroke="white" strokeWidth={0.01} fontSize={12} textAnchor="middle" dominantBaseline="middle">{selectedParcel.attributes.parno || selectedParcel.attributes.altparno}</text>
+                    </SVGOverlay >
                     <Polygon
                         positions={convertCoordinates(selectedParcel.geometry.rings)}
                         color="blue" weight={3}
                     >
+
                         <Popup autoOpen>
                             <strong>{selectedParcel.attributes.ownname}</strong><br />
                             Parcel ID: {selectedParcel.attributes.parno || selectedParcel.attributes.altparno}<br />
@@ -60,14 +64,15 @@ const ParcelMap = ({ selectedParcel, nearbyParcels }) => {
                     <Polygon
                         key={index}
                         positions={convertCoordinates(parcel.geometry.rings)}
-                        color="green" weight={0.5} fillOpacity={0.1}
+                        color="green" weight={1} fillOpacity={0.2}
                     >
                         <Popup>
                             <strong>{parcel.attributes.ownname}</strong><br />
                             Parcel ID: {parcel.attributes.parno || parcel.attributes.altparno}<br />
                             Acres: {numToTwoDecimals(parcel.attributes.gisacres)}<br />
                             County: {parcel.attributes.cntyname}<br />
-                            <a href={countyGISMap[parcel.attributes.cntyname]} target="_blank">County GIS</a>
+                            <a href={countyGISMap[parcel.attributes.cntyname]} target="_blank">County GIS</a><br />
+                            <button onClick={_ => setSelectedParcel(parcel)}>Set Active</button>
                         </Popup>
                     </Polygon>
                 )
