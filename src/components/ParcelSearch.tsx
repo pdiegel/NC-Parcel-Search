@@ -3,6 +3,8 @@ import { searchParcels } from "../api/ncParcels";
 import { fieldAliases } from "../helpers/fields";
 import { getFieldData } from "../api/ncParcels";
 import { Parcel } from "../types/Parcel";
+// @ts-ignore
+import loading from "../assets/loading.gif";
 
 const fieldTypes = new Set();
 const fieldData = await getFieldData();
@@ -70,7 +72,7 @@ const ParcelSearch = ({ setSelectedParcel }) => {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => handleEnter(e)}
-          placeholder="Enter owner name"
+          placeholder="Enter search query..."
         />
         <button onClick={handleSearch}>Search</button>
       </div>
@@ -82,19 +84,26 @@ const ParcelSearch = ({ setSelectedParcel }) => {
             onClick={() => setSelectedParcel(parcel)}
             style={{ cursor: "pointer", color: "blue" }}
           >
-            {parcel.attributes.siteadd}
-            <br />
+            {parcel.attributes.siteadd && (
+              <>
+                {parcel.attributes.siteadd}
+                <br />
+              </>
+            )}
             PID: {parcel.attributes.parno || parcel.attributes.altparno}
             <br />
             Owner: {parcel.attributes.ownname}
           </li>
         ))}
       </ul>
-      {numSearches > 0 && !searching && <p>{results.length} results found.</p>}
+      {numSearches > 0 && !searching && (
+        <p className="loading">{results.length} results found.</p>
+      )}
       {searching && (
-        <p>
-          Searching {fieldAliases[field]} for {query}...
-        </p>
+        <div className="loading">
+          <p>Searching for parcels...</p>
+          <img src={loading} alt="loading..." />
+        </div>
       )}
     </div>
   );

@@ -52,7 +52,7 @@ export const getFieldData = async (): Promise<Field[]> => {
 // Function to fetch nearby parcels
 export const getNearbyParcels = async (
   selectedParcel: Parcel,
-  bufferFeet: number = 2500
+  bufferFeet: number = 1000
 ) => {
   if (
     !selectedParcel ||
