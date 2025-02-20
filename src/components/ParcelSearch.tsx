@@ -3,11 +3,22 @@ import { searchParcels } from "../api/ncParcels";
 import { fieldAliases } from "../helpers/fields";
 import { getFieldData } from "../api/ncParcels";
 import { Parcel } from "../types/Parcel";
+import { Field } from "../types/Field";
 // @ts-ignore
 import loading from "../assets/loading.gif";
 
 const fieldTypes = new Set();
-const fieldData = await getFieldData();
+let fieldData: Field[] = [];
+
+async function fetchFieldData() {
+  return await getFieldData();
+}
+
+fetchFieldData().then((data) => {
+  // Use fieldData inside your app
+  fieldData = data;
+});
+
 fieldData.forEach((field) => fieldTypes.add(field.type));
 
 const ParcelSearch = ({ setSelectedParcel }) => {
