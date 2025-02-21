@@ -1,5 +1,8 @@
 import React from "react";
-import { numToTwoDecimals } from "../helpers/formatHelpers";
+import {
+  numToTwoDecimals,
+  extractFullSiteAddress,
+} from "../helpers/formatHelpers";
 import { countyGISMap } from "../helpers/fields";
 import { Parcel } from "../types/Parcel";
 
@@ -23,9 +26,7 @@ const SidePanel = ({
         <strong>Owner:</strong> {selectedParcel.attributes.ownname}
       </p>
       <p>
-        <strong>Site Address:</strong>{" "}
-        {selectedParcel.attributes.siteadd ||
-          `${selectedParcel.attributes.saddpref} ${selectedParcel.attributes.saddno} ${selectedParcel.attributes.saddstr} ${selectedParcel.attributes.saddsttyp}`}
+        <strong>Site Address:</strong> {extractFullSiteAddress(selectedParcel)}
       </p>
       <p>
         <strong>Parcel ID:</strong>{" "}
@@ -51,13 +52,18 @@ const SidePanel = ({
         </p>
       )}
 
-      <a
-        href={countyGISMap[selectedParcel.attributes.cntyname]}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        County GIS
-      </a>
+      {countyGISMap[selectedParcel.attributes.cntyname] && (
+        <>
+          <a
+            href={countyGISMap[selectedParcel.attributes.cntyname]}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            County GIS
+          </a>
+          <br />
+        </>
+      )}
     </div>
   );
 };

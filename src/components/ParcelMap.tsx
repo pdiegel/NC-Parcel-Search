@@ -1,13 +1,17 @@
-import { MapContainer, TileLayer, Polygon, Popup, useMap } from "react-leaflet";
-import React, { useEffect } from "react";
+import { MapContainer, Polygon, Popup, useMap } from "react-leaflet";
+import React, { useState, useEffect, useRef } from "react";
 import proj4 from "proj4";
 import { latLngBounds } from "leaflet";
-import { numToTwoDecimals } from "../helpers/formatHelpers";
+import {
+  numToTwoDecimals,
+  extractFullSiteAddress,
+} from "../helpers/formatHelpers";
 import { countyGISMap } from "../helpers/fields";
 import { Parcel } from "../types/Parcel";
 import SidePanel from "./SidePanel";
 import { convertCoordinates } from "../helpers/converters";
 import ParcelLabel from "./ParcelLabel";
+import { ActiveTileLayer, tileLayers } from "./ActiveTileLayer";
 
 // Define NC State Plane (EPSG:102719 → EPSG:4326)
 proj4.defs(
@@ -43,86 +47,121 @@ const ParcelMap = ({
   nearbyParcels: Parcel[];
   setSelectedParcel: (parcel: Parcel) => void;
 }) => {
-  return (
-    <MapContainer
-      center={[35.7796, -78.6382]}
-      zoom={12}
-      maxZoom={19}
-      style={{ height: "100vh", width: "100%" }}
-    >
-      <TileLayer
-        maxZoom={19}
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
+  const [tileLayer, setTileLayer] = useState("street");
+  const selectedParcelRef = useRef(null as any);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (selectedParcelRef.current) {
+        selectedParcelRef.current.bringToFront();
+      }
+    }, 100); // adjust the delay as needed
+    return () => clearTimeout(timer);
+  }, [selectedParcel, nearbyParcels, tileLayer]);
+  return (
+    <>
       {selectedParcel &&
-        selectedParcel.geometry &&
-        selectedParcel.geometry.rings && (
-          <>
-            <MapZoomHandler selectedParcel={selectedParcel} />
-            <ParcelLabel parcel={selectedParcel} />
-            <Polygon
-              positions={convertCoordinates(selectedParcel.geometry.rings)}
-              color="blue"
-              weight={3}
-            >
-              <SidePanel
-                selectedParcel={selectedParcel}
-                closePanel={() => setSelectedParcel({} as Parcel)}
-              />
-            </Polygon>
-          </>
+        selectedParcel.attributes &&
+        selectedParcel.attributes.parno && (
+          <SidePanel
+            selectedParcel={selectedParcel}
+            closePanel={() => setSelectedParcel({} as Parcel)}
+          />
         )}
 
-      {/* Display nearby parcels */}
-      {nearbyParcels.map(
-        (parcel, index) =>
-          parcel.geometry?.rings && (
-            <div key={parcel.attributes.parno}>
-              <ParcelLabel parcel={parcel} />
+      <div className="layer-toggle">
+        <strong>Layer:</strong>
+        <ul>
+          {/* Display buttons for each tile layer */}
+          {tileLayers &&
+            Object.keys(tileLayers).map((layer) => (
+              <li key={layer}>
+                <button onClick={() => setTileLayer(layer)}>
+                  {layer[0].toUpperCase() + layer.slice(1)}
+                </button>
+              </li>
+            ))}
+        </ul>
+      </div>
+      <MapContainer
+        center={[35.7796, -78.6382]}
+        zoom={12}
+        maxZoom={19}
+        style={{ height: "100vh", width: "100%" }}
+      >
+        <ActiveTileLayer tileLayer={tileLayer} />
+
+        {/* Display nearby parcels */}
+        {nearbyParcels.map(
+          (parcel, index) =>
+            parcel.geometry?.rings && (
+              <div key={`${parcel.attributes.parno}-${index}`}>
+                <ParcelLabel parcel={parcel} />
+                <Polygon
+                  key={index}
+                  positions={convertCoordinates(parcel.geometry.rings)}
+                  color="#90EE91"
+                  weight={1}
+                  fillOpacity={0.1}
+                  smoothFactor={5}
+                >
+                  <Popup>
+                    <strong>{parcel.attributes.ownname}</strong>
+                    <br />
+                    Site Address:{" "}
+                    {extractFullSiteAddress(parcel) || "No Address Found"}
+                    <br />
+                    Parcel ID:{" "}
+                    {parcel.attributes.parno || parcel.attributes.altparno}
+                    <br />
+                    Acres: {numToTwoDecimals(parcel.attributes.gisacres)}
+                    <br />
+                    County: {parcel.attributes.cntyname}
+                    <br />
+                    {parcel.attributes.sourceref && (
+                      <>
+                        {parcel.attributes.sourceref}
+                        <br />
+                      </>
+                    )}
+                    {countyGISMap[parcel.attributes.cntyname] && (
+                      <>
+                        <a
+                          href={countyGISMap[parcel.attributes.cntyname]}
+                          target="_blank"
+                        >
+                          County GIS
+                        </a>
+                        <br />
+                      </>
+                    )}
+                    <button onClick={() => setSelectedParcel(parcel)}>
+                      Set Active
+                    </button>
+                  </Popup>
+                </Polygon>
+              </div>
+            )
+        )}
+
+        {/* Display selected parcel */}
+        {selectedParcel &&
+          selectedParcel.geometry &&
+          selectedParcel.geometry.rings && (
+            <>
+              <MapZoomHandler selectedParcel={selectedParcel} />
+              <ParcelLabel parcel={selectedParcel} />
               <Polygon
-                key={index}
-                positions={convertCoordinates(parcel.geometry.rings)}
-                color="green"
-                weight={0.8}
-                fillOpacity={0.1}
-              >
-                <Popup>
-                  <strong>{parcel.attributes.ownname}</strong>
-                  <br />
-                  Site Address:{" "}
-                  {parcel.attributes.siteadd ||
-                    `${parcel.attributes.maddpref} ${parcel.attributes.saddpref} ${parcel.attributes.saddno} ${parcel.attributes.saddstr} ${parcel.attributes.saddsttyp} ${parcel.attributes.saddstsuf}`}
-                  <br />
-                  Parcel ID:{" "}
-                  {parcel.attributes.parno || parcel.attributes.altparno}
-                  <br />
-                  Acres: {numToTwoDecimals(parcel.attributes.gisacres)}
-                  <br />
-                  County: {parcel.attributes.cntyname}
-                  <br />
-                  {parcel.attributes.sourceref && (
-                    <>
-                      {parcel.attributes.sourceref}
-                      <br />
-                    </>
-                  )}
-                  <a
-                    href={countyGISMap[parcel.attributes.cntyname]}
-                    target="_blank"
-                  >
-                    County GIS
-                  </a>
-                  <br />
-                  <button onClick={() => setSelectedParcel(parcel)}>
-                    Set Active
-                  </button>
-                </Popup>
-              </Polygon>
-            </div>
-          )
-      )}
-    </MapContainer>
+                ref={selectedParcelRef}
+                positions={convertCoordinates(selectedParcel.geometry.rings)}
+                color="#6593B1"
+                weight={3}
+                smoothFactor={5}
+              ></Polygon>
+            </>
+          )}
+      </MapContainer>
+    </>
   );
 };
 

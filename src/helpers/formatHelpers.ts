@@ -1,3 +1,5 @@
+import { Parcel } from "../types/Parcel";
+
 export function numToTwoDecimals(number: number) {
   return (Math.round(number * 100) / 100).toFixed(2);
 }
@@ -35,4 +37,21 @@ export function formatWhereClause(value: string, type: string, field: string) {
   }
   console.log("Where Clause: ", whereClause);
   return whereClause;
+}
+
+export function extractAddressNumber(address: string): string {
+  const addressParts = address.split(" ");
+  if (addressParts[0] && isNumeric(addressParts[0])) {
+    return addressParts[0];
+  }
+  return "0";
+}
+
+export function extractFullSiteAddress(parcel: Parcel): string {
+  return (
+    parcel.attributes.siteadd ||
+    `${parcel.attributes.maddpref} ${parcel.attributes.saddpref} \
+    ${parcel.attributes.saddno} ${parcel.attributes.saddstr} \
+    ${parcel.attributes.saddsttyp} ${parcel.attributes.saddstsuf}`
+  );
 }
