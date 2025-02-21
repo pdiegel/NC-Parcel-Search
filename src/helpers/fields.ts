@@ -26,4 +26,8 @@ export const countyGISMap = {
   Guilford: "https://gisdv.guilfordcountync.gov/Guilford/",
   Johnston:
     "https://mapclick6.johnstonnc.com/mapclick6/index.html/?app=mapclick&ui=mapclick4",
+  Ashe: "https://gis.ashecountygov.com/maps/default.htm",
+  Lee: "https://lee-arcgis.leecountync.gov/parcelmap/",
+  Harnett: "https://gis.harnett.org/gisviewer/",
+  // Add more county GIS links here,
 };

@@ -5,7 +5,13 @@ import { Parcel } from "../types/Parcel";
 import { convertCoordinates } from "../helpers/converters";
 import { extractAddressNumber } from "../helpers/formatHelpers";
 
-const ParcelLabel = ({ parcel }: { parcel: Parcel }) => {
+const ParcelLabel = ({
+  parcel,
+  labelFontSize,
+}: {
+  parcel: Parcel;
+  labelFontSize: number | string;
+}) => {
   if (!parcel?.geometry?.rings) return null;
 
   const bounds = latLngBounds(convertCoordinates(parcel.geometry.rings));
@@ -18,7 +24,7 @@ const ParcelLabel = ({ parcel }: { parcel: Parcel }) => {
         fill="#eee"
         stroke="black"
         strokeWidth={0.5}
-        style={{ fontSize: "20px", fontWeight: "bold" }}
+        style={{ fontSize: labelFontSize, fontWeight: "bold" }}
         textAnchor="middle"
         dominantBaseline="middle"
       >

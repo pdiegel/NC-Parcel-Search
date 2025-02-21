@@ -55,7 +55,7 @@ const ParcelMap = ({
       if (selectedParcelRef.current) {
         selectedParcelRef.current.bringToFront();
       }
-    }, 100); // adjust the delay as needed
+    }, 100);
     return () => clearTimeout(timer);
   }, [selectedParcel, nearbyParcels, tileLayer]);
   return (
@@ -96,14 +96,14 @@ const ParcelMap = ({
           (parcel, index) =>
             parcel.geometry?.rings && (
               <div key={`${parcel.attributes.parno}-${index}`}>
-                <ParcelLabel parcel={parcel} />
+                <ParcelLabel parcel={parcel} labelFontSize={"18px"} />
                 <Polygon
                   key={index}
                   positions={convertCoordinates(parcel.geometry.rings)}
                   color="#90EE91"
                   weight={1}
                   fillOpacity={0.1}
-                  smoothFactor={5}
+                  smoothFactor={1}
                 >
                   <Popup>
                     <strong>{parcel.attributes.ownname}</strong>
@@ -150,13 +150,13 @@ const ParcelMap = ({
           selectedParcel.geometry.rings && (
             <>
               <MapZoomHandler selectedParcel={selectedParcel} />
-              <ParcelLabel parcel={selectedParcel} />
+              <ParcelLabel parcel={selectedParcel} labelFontSize={"30px"} />
               <Polygon
                 ref={selectedParcelRef}
                 positions={convertCoordinates(selectedParcel.geometry.rings)}
                 color="#6593B1"
                 weight={3}
-                smoothFactor={5}
+                smoothFactor={1}
               ></Polygon>
             </>
           )}
