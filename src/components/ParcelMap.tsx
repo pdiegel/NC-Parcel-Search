@@ -100,7 +100,7 @@ const ParcelMap = ({
                 <Polygon
                   key={index}
                   positions={convertCoordinates(parcel.geometry.rings)}
-                  color="#90EE91"
+                  color="#228B22"
                   weight={1}
                   fillOpacity={0.1}
                   smoothFactor={1}
