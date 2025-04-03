@@ -65,3 +65,12 @@ export function extractFullSiteAddress(parcel: Parcel): string {
     ${parcel.attributes.saddsttyp} ${parcel.attributes.saddstsuf}`
   );
 }
+
+export function replaceStringPlaceholders(
+  template: string,
+  replacements: Record<string, any>
+): string {
+  return template.replace(/{(\w+)}/g, (match, key) => {
+    return replacements[key] || match;
+  });
+}

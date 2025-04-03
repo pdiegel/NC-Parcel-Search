@@ -5,6 +5,7 @@ import { latLngBounds } from "leaflet";
 import {
   numToTwoDecimals,
   extractFullSiteAddress,
+  replaceStringPlaceholders,
 } from "../helpers/formatHelpers";
 import { countyGISMap } from "../helpers/fields";
 import { Parcel } from "../types/Parcel";
@@ -114,7 +115,10 @@ const ParcelMap = ({
                     Parcel ID:{" "}
                     {parcel.attributes.parno || parcel.attributes.altparno}
                     <br />
-                    Acres: {numToTwoDecimals(parcel.attributes.gisacres)}
+                    Acres:{" "}
+                    {(parcel.attributes.gisacres > 0 &&
+                      numToTwoDecimals(parcel.attributes.gisacres)) ||
+                      numToTwoDecimals(parcel.attributes.recareano)}
                     <br />
                     County: {parcel.attributes.cntyname}
                     <br />
@@ -127,7 +131,10 @@ const ParcelMap = ({
                     {countyGISMap[parcel.attributes.cntyname] && (
                       <>
                         <a
-                          href={countyGISMap[parcel.attributes.cntyname]}
+                          href={replaceStringPlaceholders(
+                            countyGISMap[parcel.attributes.cntyname],
+                            parcel.attributes
+                          )}
                           target="_blank"
                         >
                           County GIS

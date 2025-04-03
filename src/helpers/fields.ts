@@ -20,7 +20,7 @@ export const fieldAliases = {
 };
 
 export const countyGISMap = {
-  Wake: "https://maps.raleighnc.gov/iMAPS/",
+  Wake: "https://maps.raleighnc.gov/iMAPS/?pin={parno}",
   Guilford: "https://gisdv.guilfordcountync.gov/Guilford/",
   Johnston:
     "https://mapclick6.johnstonnc.com/mapclick6/index.html/?app=mapclick&ui=mapclick4",
@@ -29,5 +29,11 @@ export const countyGISMap = {
   Harnett: "https://gis.harnett.org/gisviewer/",
   Bladen: "https://gis.bladenco.org/",
   Randolph: "https://gis.randolphcountync.gov/randolphts/",
+  Hertford:
+    "https://hertfordcountync.maps.arcgis.com/apps/instant/sidebar/index.html?appid=26b28f8a51164fc89431eedd61072339",
+  Surry: "http://www.gis.surryinfo.net/maps/default.htm",
+  Hoke: "https://maps.hokecounty.org/maps/",
+  Durham: "https://maps.durhamnc.gov/?pid={altparno}",
+  Robeson: "https://maps.roktech.net/ROKMAPS_Robeson/",
   // Add more county GIS links here,
 };

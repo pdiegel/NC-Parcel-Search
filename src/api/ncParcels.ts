@@ -53,7 +53,7 @@ export const getFieldData = async (): Promise<Field[]> => {
 // Function to fetch nearby parcels
 export const getNearbyParcels = async (
   selectedParcel: Parcel,
-  bufferFeet: number = 1500
+  bufferFeet: number = 500
 ) => {
   if (
     !selectedParcel ||
@@ -89,9 +89,9 @@ export const getNearbyParcels = async (
         geometry: JSON.stringify(geometry),
         geometryType: "esriGeometryEnvelope",
         spatialRel: "esriSpatialRelIntersects",
-        resultRecordCount: 150,
         outFields: "*",
         returnGeometry: true,
+        resultRecordCount: 400,
       },
     });
 

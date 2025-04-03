@@ -2,6 +2,7 @@ import React from "react";
 import {
   numToTwoDecimals,
   extractFullSiteAddress,
+  replaceStringPlaceholders,
 } from "../helpers/formatHelpers";
 import { countyGISMap } from "../helpers/fields";
 import { Parcel } from "../types/Parcel";
@@ -41,7 +42,9 @@ const SidePanel = ({
         )}
       <p>
         <strong>Acres:</strong>{" "}
-        {numToTwoDecimals(selectedParcel.attributes.gisacres)}
+        {(selectedParcel.attributes.gisacres > 0 &&
+          numToTwoDecimals(selectedParcel.attributes.gisacres)) ||
+          numToTwoDecimals(selectedParcel.attributes.recareano)}
       </p>
       <p>
         <strong>County:</strong> {selectedParcel.attributes.cntyname}
@@ -62,7 +65,10 @@ const SidePanel = ({
       {countyGISMap[selectedParcel.attributes.cntyname] && (
         <>
           <a
-            href={countyGISMap[selectedParcel.attributes.cntyname]}
+            href={replaceStringPlaceholders(
+              countyGISMap[selectedParcel.attributes.cntyname],
+              selectedParcel.attributes
+            )}
             target="_blank"
             rel="noopener noreferrer"
           >
