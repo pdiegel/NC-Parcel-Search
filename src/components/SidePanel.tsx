@@ -32,6 +32,13 @@ const SidePanel = ({
         <strong>Parcel ID:</strong>{" "}
         {selectedParcel.attributes.parno || selectedParcel.attributes.altparno}
       </p>
+      {selectedParcel.attributes.altparno &&
+        selectedParcel.attributes.parno && (
+          <p>
+            <strong>Alternate Parcel ID:</strong>{" "}
+            {selectedParcel.attributes.altparno}
+          </p>
+        )}
       <p>
         <strong>Acres:</strong>{" "}
         {numToTwoDecimals(selectedParcel.attributes.gisacres)}

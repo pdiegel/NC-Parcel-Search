@@ -103,7 +103,7 @@ const ParcelMap = ({
                   color="#228B22"
                   weight={1}
                   fillOpacity={0.1}
-                  smoothFactor={1}
+                  smoothFactor={2}
                 >
                   <Popup>
                     <strong>{parcel.attributes.ownname}</strong>

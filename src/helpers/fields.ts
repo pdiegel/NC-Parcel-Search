@@ -1,11 +1,9 @@
 export const fieldAliases = {
-  parno: "Parcel Number",
-  altparno: "Alternate Parcel Number",
+  parno: "Parcel Number (PIN)",
   ownname: "Owner Name",
   parval: "Parcel Value",
   siteadd: "Full Site Address",
   gisacres: "GIS Acres",
-  struct: "Structure Indicator",
   saledate: "Last Sale Date",
   saledatetx: "Last Sale Date Text",
   legdecfull: "Full Legal Description",
@@ -29,5 +27,7 @@ export const countyGISMap = {
   Ashe: "https://gis.ashecountygov.com/maps/default.htm",
   Lee: "https://lee-arcgis.leecountync.gov/parcelmap/",
   Harnett: "https://gis.harnett.org/gisviewer/",
+  Bladen: "https://gis.bladenco.org/",
+  Randolph: "https://gis.randolphcountync.gov/randolphts/",
   // Add more county GIS links here,
 };

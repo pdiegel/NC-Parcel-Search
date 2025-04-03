@@ -233,3 +233,11 @@ svg {
     gap: 10px;
     list-style: none;
 }
+
+svg,
+text {
+    min-width: 10px;
+    min-height: 10px;
+    max-width: 20px;
+    max-height: 20px;
+}

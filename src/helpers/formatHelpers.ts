@@ -35,6 +35,16 @@ export function formatWhereClause(value: string, type: string, field: string) {
     default:
       whereClause = `${field} = '${value}'`; // Default to string match
   }
+
+  switch (field) {
+    /* Parcel numbers have two possible fields: parno and altparno
+    If the user searches for a parcel number, we need to check both fields */
+    case "parno":
+      whereClause = `UPPER(${field}) LIKE UPPER('%${value}%') OR UPPER(altparno) LIKE UPPER('%${value}%')`;
+      break;
+    default:
+      break;
+  }
   console.log("Where Clause: ", whereClause);
   return whereClause;
 }

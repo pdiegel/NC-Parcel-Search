@@ -21,6 +21,7 @@ export const searchParcels = async (
         where: formatWhereClause(query, type, field),
         outFields: "*",
         returnGeometry: true,
+        resultRecordCount: 100,
       },
     });
     console.log(response.data.features);
@@ -41,7 +42,7 @@ export const getFieldData = async (): Promise<Field[]> => {
         returnGeometry: false,
       },
     });
-    console.log(response.data.fields);
+    // console.log(response.data.fields);
     return response.data.fields || [];
   } catch (error) {
     console.error("API request failed:", error);
@@ -88,6 +89,7 @@ export const getNearbyParcels = async (
         geometry: JSON.stringify(geometry),
         geometryType: "esriGeometryEnvelope",
         spatialRel: "esriSpatialRelIntersects",
+        resultRecordCount: 150,
         outFields: "*",
         returnGeometry: true,
       },
