@@ -28,7 +28,7 @@ export const countyGISMap = {
   Lee: "https://lee-arcgis.leecountync.gov/parcelmap/",
   Harnett: "https://gis.harnett.org/gisviewer/",
   Bladen: "https://gis.bladenco.org/",
-  Randolph: "https://gis.randolphcountync.gov/randolphts/",
+  Randolph: "https://gis.randolphcountync.gov/randolphts/?pin={parno}",
   Hertford:
     "https://hertfordcountync.maps.arcgis.com/apps/instant/sidebar/index.html?appid=26b28f8a51164fc89431eedd61072339",
   Surry: "http://www.gis.surryinfo.net/maps/default.htm",
