@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ParcelSearch from "./components/ParcelSearch";
 import ParcelMap from "./components/ParcelMap";
 import { getNearbyParcels } from "./api/ncParcels";
+import { Analytics } from "@vercel/analytics/react";
 
 function App() {
   const [selectedParcel, setSelectedParcel] = useState(null);
