@@ -6,13 +6,19 @@ import {
   numToTwoDecimals,
   extractFullSiteAddress,
   replaceStringPlaceholders,
-} from "../helpers/formatHelpers";
-import { countyGISMap } from "../helpers/fields";
+} from "../lib/parcel/formatHelpers";
+import { COUNTY_GIS_MAP } from "../lib/constants";
 import { Parcel } from "../types/Parcel";
 import SidePanel from "./SidePanel";
-import { convertCoordinates } from "../helpers/converters";
+import { convertCoordinates } from "../lib/parcel/converters";
 import ParcelLabel from "./ParcelLabel";
 import { ActiveTileLayer, tileLayers } from "./ActiveTileLayer";
+import {
+  DEFAULT_ZOOM,
+  MAX_ZOOM,
+  STARTING_COORDINATES,
+  LABEL_FONT_SIZE,
+} from "../lib/constants";
 
 // Define NC State Plane (EPSG:102719 → EPSG:4326)
 proj4.defs(
@@ -20,19 +26,34 @@ proj4.defs(
   "+proj=lcc +lat_1=36.16666666666666 +lat_2=34.33333333333334 +lat_0=33.75 +lon_0=-79 +x_0=609601.22 +y_0=0 +datum=NAD83 +units=us-ft +no_defs"
 );
 
+const MapZoomTracker = ({
+  onZoomChange,
+}: {
+  onZoomChange: (zoom: number) => void;
+}) => {
+  const map = useMap();
+
+  useEffect(() => {
+    const updateZoom = () => onZoomChange(map.getZoom());
+    updateZoom(); // set initial zoom
+    map.on("zoomend", updateZoom);
+    return () => {
+      map.off("zoomend", updateZoom);
+    };
+  }, [map, onZoomChange]);
+
+  return null;
+};
+
 const MapZoomHandler = ({ selectedParcel }: { selectedParcel: Parcel }) => {
   const map = useMap();
 
   useEffect(() => {
-    if (
-      selectedParcel &&
-      selectedParcel.geometry &&
-      selectedParcel.geometry.rings
-    ) {
+    if (selectedParcel?.geometry?.rings) {
       const polygonCoordinates = convertCoordinates(
         selectedParcel.geometry.rings
       );
-      map.fitBounds(latLngBounds(polygonCoordinates)); // Fit map to selected parcel
+      map.fitBounds(latLngBounds(polygonCoordinates));
     }
   }, [selectedParcel, map]);
 
@@ -49,55 +70,58 @@ const ParcelMap = ({
   setSelectedParcel: (parcel: Parcel) => void;
 }) => {
   const [tileLayer, setTileLayer] = useState("street");
-  const selectedParcelRef = useRef(null as any);
+  const [mapZoom, setMapZoom] = useState(DEFAULT_ZOOM);
+  const selectedParcelRef = useRef(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       if (selectedParcelRef.current) {
-        selectedParcelRef.current.bringToFront();
+        (selectedParcelRef.current as any).bringToFront();
       }
     }, 100);
     return () => clearTimeout(timer);
   }, [selectedParcel, nearbyParcels, tileLayer]);
+
   return (
     <>
-      {selectedParcel &&
-        selectedParcel.attributes &&
-        selectedParcel.attributes.parno && (
-          <SidePanel
-            selectedParcel={selectedParcel}
-            closePanel={() => setSelectedParcel({} as Parcel)}
-          />
-        )}
+      {selectedParcel?.attributes?.parno && (
+        <SidePanel
+          selectedParcel={selectedParcel}
+          closePanel={() => setSelectedParcel({} as Parcel)}
+        />
+      )}
 
       <div className="layer-toggle">
         <strong>Layer:</strong>
         <ul>
-          {/* Display buttons for each tile layer */}
-          {tileLayers &&
-            Object.keys(tileLayers).map((layer) => (
-              <li key={layer}>
-                <button onClick={() => setTileLayer(layer)}>
-                  {layer[0].toUpperCase() + layer.slice(1)}
-                </button>
-              </li>
-            ))}
+          {Object.keys(tileLayers).map((layer) => (
+            <li key={layer}>
+              <button onClick={() => setTileLayer(layer)}>
+                {layer[0].toUpperCase() + layer.slice(1)}
+              </button>
+            </li>
+          ))}
         </ul>
       </div>
+
       <MapContainer
-        center={[35.7796, -78.6382]}
-        zoom={12}
-        maxZoom={19}
+        center={STARTING_COORDINATES}
+        zoom={DEFAULT_ZOOM}
+        maxZoom={MAX_ZOOM}
         style={{ height: "100vh", width: "100%" }}
       >
+        <MapZoomTracker onZoomChange={setMapZoom} />
         <ActiveTileLayer tileLayer={tileLayer} />
 
-        {/* Display nearby parcels */}
         {nearbyParcels.map(
           (parcel, index) =>
             parcel.geometry?.rings && (
               <div key={`${parcel.attributes.parno}-${index}`}>
-                <ParcelLabel parcel={parcel} labelFontSize={"18px"} />
+                <ParcelLabel
+                  parcel={parcel}
+                  labelFontSize={LABEL_FONT_SIZE}
+                  mapCurrentZoom={mapZoom}
+                />
                 <Polygon
                   key={index}
                   positions={convertCoordinates(parcel.geometry.rings)}
@@ -128,11 +152,11 @@ const ParcelMap = ({
                         <br />
                       </>
                     )}
-                    {countyGISMap[parcel.attributes.cntyname] && (
+                    {COUNTY_GIS_MAP[parcel.attributes.cntyname] && (
                       <>
                         <a
                           href={replaceStringPlaceholders(
-                            countyGISMap[parcel.attributes.cntyname],
+                            COUNTY_GIS_MAP[parcel.attributes.cntyname],
                             parcel.attributes
                           )}
                           target="_blank"
@@ -151,22 +175,23 @@ const ParcelMap = ({
             )
         )}
 
-        {/* Display selected parcel */}
-        {selectedParcel &&
-          selectedParcel.geometry &&
-          selectedParcel.geometry.rings && (
-            <>
-              <MapZoomHandler selectedParcel={selectedParcel} />
-              <ParcelLabel parcel={selectedParcel} labelFontSize={"30px"} />
-              <Polygon
-                ref={selectedParcelRef}
-                positions={convertCoordinates(selectedParcel.geometry.rings)}
-                color="#6593B1"
-                weight={3}
-                smoothFactor={1}
-              ></Polygon>
-            </>
-          )}
+        {selectedParcel?.geometry?.rings && (
+          <>
+            <MapZoomHandler selectedParcel={selectedParcel} />
+            <ParcelLabel
+              parcel={selectedParcel}
+              labelFontSize={LABEL_FONT_SIZE}
+              mapCurrentZoom={mapZoom}
+            />
+            <Polygon
+              ref={selectedParcelRef}
+              positions={convertCoordinates(selectedParcel.geometry.rings)}
+              color="#6593B1"
+              weight={3}
+              smoothFactor={1}
+            />
+          </>
+        )}
       </MapContainer>
     </>
   );

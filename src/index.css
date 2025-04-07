@@ -206,6 +206,11 @@ button:hover {
     transform: scale(1.05);
 }
 
+.side-panel button {
+    color: #333;
+    padding: 0;
+}
+
 /* SVG and Interactive Elements */
 svg {
     overflow: visible;
@@ -234,10 +239,8 @@ svg {
     list-style: none;
 }
 
-svg,
-text {
-    min-width: 10px;
-    min-height: 10px;
-    max-width: 20px;
-    max-height: 20px;
+.leaflet-container svg,
+.leaflet-container text {
+    transition: font-size 500ms ease-out;
+    text-shadow: 1px 1px 4px rgba(48, 48, 48, 1);
 }

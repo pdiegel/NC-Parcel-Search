@@ -1,20 +1,28 @@
 import { SVGOverlay } from "react-leaflet";
 import { latLngBounds } from "leaflet";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Parcel } from "../types/Parcel";
-import { convertCoordinates } from "../helpers/converters";
-import { extractAddressNumber } from "../helpers/formatHelpers";
+import { convertCoordinates } from "../lib/parcel/converters";
+import { extractAddressNumber } from "../lib/parcel/formatHelpers";
 
 const ParcelLabel = ({
   parcel,
   labelFontSize,
+  mapCurrentZoom,
 }: {
   parcel: Parcel;
-  labelFontSize: number | string;
+  labelFontSize: number;
+  mapCurrentZoom: number;
 }) => {
   if (!parcel?.geometry?.rings) return null;
 
   const bounds = latLngBounds(convertCoordinates(parcel.geometry.rings));
+  const [newLabelFontSize, setNewLabelFontSize] = useState(labelFontSize);
+
+  useEffect(() => {
+    // Reduce the font size by 8px for each zoom level below 18
+    setNewLabelFontSize(40 - (18 - mapCurrentZoom) * 8);
+  }, [mapCurrentZoom]);
 
   return (
     <SVGOverlay bounds={bounds} className="svg-holder">
@@ -22,9 +30,7 @@ const ParcelLabel = ({
         x="50%"
         y="50%"
         fill="#eee"
-        stroke="black"
-        strokeWidth={0.5}
-        style={{ fontSize: labelFontSize, fontWeight: "bold" }}
+        style={{ fontSize: newLabelFontSize, fontWeight: "bold" }}
         textAnchor="middle"
         dominantBaseline="middle"
       >
