@@ -3,8 +3,8 @@ import {
   numToTwoDecimals,
   extractFullSiteAddress,
   replaceStringPlaceholders,
-} from "../helpers/formatHelpers";
-import { countyGISMap } from "../helpers/fields";
+} from "../lib/parcel/formatHelpers";
+import { COUNTY_GIS_MAP } from "../lib/constants";
 import { Parcel } from "../types/Parcel";
 
 const SidePanel = ({
@@ -62,11 +62,11 @@ const SidePanel = ({
         </p>
       )}
 
-      {countyGISMap[selectedParcel.attributes.cntyname] && (
+      {COUNTY_GIS_MAP[selectedParcel.attributes.cntyname] && (
         <>
           <a
             href={replaceStringPlaceholders(
-              countyGISMap[selectedParcel.attributes.cntyname],
+              COUNTY_GIS_MAP[selectedParcel.attributes.cntyname],
               selectedParcel.attributes
             )}
             target="_blank"

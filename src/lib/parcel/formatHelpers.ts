@@ -1,4 +1,4 @@
-import { Parcel } from "../types/Parcel";
+import { Parcel } from "../../types/Parcel";
 
 export function numToTwoDecimals(number: number) {
   return (Math.round(number * 100) / 100).toFixed(2);
@@ -60,7 +60,7 @@ export function extractAddressNumber(address: string): string {
 export function extractFullSiteAddress(parcel: Parcel): string {
   return (
     parcel.attributes.siteadd ||
-    `${parcel.attributes.maddpref} ${parcel.attributes.saddpref} \
+    `${parcel.attributes.saddpref} \
     ${parcel.attributes.saddno} ${parcel.attributes.saddstr} \
     ${parcel.attributes.saddsttyp} ${parcel.attributes.saddstsuf}`
   );

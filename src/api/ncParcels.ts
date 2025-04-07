@@ -1,12 +1,8 @@
 import axios from "axios";
-import { formatWhereClause } from "../helpers/formatHelpers";
+import { formatWhereClause } from "../lib/parcel/formatHelpers";
 import { Parcel } from "../types/Parcel";
 import { Field } from "../types/Field";
-
-const BASE_URL: string =
-  "https://services.nconemap.gov/secure/rest/services/NC1Map_Parcels/MapServer/1/query";
-const METADATA_URL: string =
-  "https://services.nconemap.gov/secure/rest/services/NC1Map_Parcels/MapServer/1?f=json";
+import { BASE_URL, METADATA_URL, PARCEL_OUTFIELDS } from "../lib/constants";
 
 // Function to search parcels by owner name or parcel number
 export const searchParcels = async (
@@ -19,7 +15,7 @@ export const searchParcels = async (
       params: {
         f: "json",
         where: formatWhereClause(query, type, field),
-        outFields: "*",
+        outFields: PARCEL_OUTFIELDS,
         returnGeometry: true,
         resultRecordCount: 100,
       },
@@ -38,11 +34,10 @@ export const getFieldData = async (): Promise<Field[]> => {
       params: {
         f: "json",
         where: "1=1",
-        outFields: "*",
         returnGeometry: false,
       },
     });
-    // console.log(response.data.fields);
+    console.log("FIELDS", response.data.fields);
     return response.data.fields || [];
   } catch (error) {
     console.error("API request failed:", error);
@@ -89,7 +84,7 @@ export const getNearbyParcels = async (
         geometry: JSON.stringify(geometry),
         geometryType: "esriGeometryEnvelope",
         spatialRel: "esriSpatialRelIntersects",
-        outFields: "*",
+        outFields: PARCEL_OUTFIELDS,
         returnGeometry: true,
         resultRecordCount: 400,
       },
