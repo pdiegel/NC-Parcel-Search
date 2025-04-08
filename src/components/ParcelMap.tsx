@@ -74,21 +74,19 @@ const ParcelMap = ({
   const selectedParcelRef = useRef(null);
 
   useEffect(() => {
+    // Brings the selected parcel above the nearby parcels
     const timer = setTimeout(() => {
       if (selectedParcelRef.current) {
         (selectedParcelRef.current as any).bringToFront();
       }
     }, 100);
     return () => clearTimeout(timer);
-  }, [selectedParcel, nearbyParcels, tileLayer]);
+  }, [nearbyParcels]);
 
   return (
     <>
       {selectedParcel?.attributes?.parno && (
-        <SidePanel
-          selectedParcel={selectedParcel}
-          closePanel={() => setSelectedParcel({} as Parcel)}
-        />
+        <SidePanel selectedParcel={selectedParcel} />
       )}
 
       <div className="layer-toggle">
@@ -128,7 +126,7 @@ const ParcelMap = ({
                   color="#228B22"
                   weight={1}
                   fillOpacity={0.1}
-                  smoothFactor={2}
+                  smoothFactor={1}
                 >
                   <Popup>
                     <strong>{parcel.attributes.ownname}</strong>
