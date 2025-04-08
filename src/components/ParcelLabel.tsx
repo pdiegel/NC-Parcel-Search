@@ -21,7 +21,7 @@ const ParcelLabel = ({
 
   useEffect(() => {
     // Reduce the font size by 8px for each zoom level below 18
-    setNewLabelFontSize(40 - (18 - mapCurrentZoom) * 8);
+    setNewLabelFontSize(Math.max(0, 18 - (18 - mapCurrentZoom) * 5));
   }, [mapCurrentZoom]);
 
   return (

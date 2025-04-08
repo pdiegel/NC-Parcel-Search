@@ -20,7 +20,10 @@ export const searchParcels = async (
         resultRecordCount: 100,
       },
     });
-    console.log(response.data.features);
+    if (response.data.error) {
+      throw new Error(response.data.error.message);
+    }
+    console.log("Search Results:", response.data.features);
     return response.data.features || [];
   } catch (error) {
     console.error("API request failed:", error);
@@ -37,6 +40,9 @@ export const getFieldData = async (): Promise<Field[]> => {
         returnGeometry: false,
       },
     });
+    if (response.data.error) {
+      throw new Error(response.data.error.message);
+    }
     console.log("FIELDS", response.data.fields);
     return response.data.fields || [];
   } catch (error) {
@@ -48,7 +54,7 @@ export const getFieldData = async (): Promise<Field[]> => {
 // Function to fetch nearby parcels
 export const getNearbyParcels = async (
   selectedParcel: Parcel,
-  bufferFeet: number = 500
+  bufferFeet: number = 2500
 ) => {
   if (
     !selectedParcel ||
@@ -89,6 +95,11 @@ export const getNearbyParcels = async (
         resultRecordCount: 400,
       },
     });
+
+    if (response.data.error) {
+      throw new Error(response.data.error.message);
+    }
+    console.log("Nearby Parcels:", response.data.features);
 
     let parcels = response.data.features || [];
 
