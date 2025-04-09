@@ -1,12 +1,8 @@
 import axios from "axios";
-import { formatWhereClause } from "../helpers/formatHelpers";
+import { formatWhereClause } from "../lib/parcel/formatHelpers";
 import { Parcel } from "../types/Parcel";
 import { Field } from "../types/Field";
-
-const BASE_URL: string =
-  "https://services.nconemap.gov/secure/rest/services/NC1Map_Parcels/MapServer/1/query";
-const METADATA_URL: string =
-  "https://services.nconemap.gov/secure/rest/services/NC1Map_Parcels/MapServer/1?f=json";
+import { BASE_URL, METADATA_URL, PARCEL_OUTFIELDS } from "../lib/constants";
 
 // Function to search parcels by owner name or parcel number
 export const searchParcels = async (
@@ -19,12 +15,15 @@ export const searchParcels = async (
       params: {
         f: "json",
         where: formatWhereClause(query, type, field),
-        outFields: "*",
+        outFields: PARCEL_OUTFIELDS,
         returnGeometry: true,
         resultRecordCount: 100,
       },
     });
-    console.log(response.data.features);
+    if (response.data.error) {
+      throw new Error(response.data.error.message);
+    }
+    console.log("Search Results:", response.data.features);
     return response.data.features || [];
   } catch (error) {
     console.error("API request failed:", error);
@@ -38,11 +37,13 @@ export const getFieldData = async (): Promise<Field[]> => {
       params: {
         f: "json",
         where: "1=1",
-        outFields: "*",
         returnGeometry: false,
       },
     });
-    // console.log(response.data.fields);
+    if (response.data.error) {
+      throw new Error(response.data.error.message);
+    }
+    console.log("FIELDS", response.data.fields);
     return response.data.fields || [];
   } catch (error) {
     console.error("API request failed:", error);
@@ -53,7 +54,7 @@ export const getFieldData = async (): Promise<Field[]> => {
 // Function to fetch nearby parcels
 export const getNearbyParcels = async (
   selectedParcel: Parcel,
-  bufferFeet: number = 500
+  bufferFeet: number = 2500
 ) => {
   if (
     !selectedParcel ||
@@ -89,11 +90,16 @@ export const getNearbyParcels = async (
         geometry: JSON.stringify(geometry),
         geometryType: "esriGeometryEnvelope",
         spatialRel: "esriSpatialRelIntersects",
-        outFields: "*",
+        outFields: PARCEL_OUTFIELDS,
         returnGeometry: true,
         resultRecordCount: 400,
       },
     });
+
+    if (response.data.error) {
+      throw new Error(response.data.error.message);
+    }
+    console.log("Nearby Parcels:", response.data.features);
 
     let parcels = response.data.features || [];
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { searchParcels } from "../api/ncParcels";
-import { fieldAliases } from "../helpers/fields";
+import { PARCEL_FIELD_ALIASES } from "../lib/constants";
 import { getFieldData } from "../api/ncParcels";
 import { Parcel } from "../types/Parcel";
 import { Field } from "../types/Field";
@@ -23,7 +23,7 @@ fieldData.forEach((field) => fieldTypes.add(field.type));
 
 const ParcelSearch = ({ setSelectedParcel }) => {
   const [query, setQuery] = useState("");
-  const [field, setField] = useState(Object.keys(fieldAliases)[0]);
+  const [field, setField] = useState(Object.keys(PARCEL_FIELD_ALIASES)[0]);
   const [results, setResults] = useState([]);
   const [searching, setSearching] = useState(false);
   const [numSearches, setNumSearches] = useState(0);
@@ -72,7 +72,7 @@ const ParcelSearch = ({ setSelectedParcel }) => {
           id="field"
           onChange={(e) => setField(e.target.value)}
         >
-          {Object.entries(fieldAliases).map(([field, alias]) => (
+          {Object.entries(PARCEL_FIELD_ALIASES).map(([field, alias]) => (
             <option key={field} value={field}>
               {alias}
             </option>

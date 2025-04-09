@@ -1,4 +1,4 @@
-import { Parcel } from "../types/Parcel";
+import { Parcel } from "../../types/Parcel";
 
 export function numToTwoDecimals(number: number) {
   return (Math.round(number * 100) / 100).toFixed(2);
@@ -12,9 +12,9 @@ export function formatWhereClause(value: string, type: string, field: string) {
   if (!value) {
     return "1=1"; // Return all records
   }
-  console.log("value:", value);
-  console.log("type:", type);
-  console.log("field:", field);
+  //   console.log("value:", value);
+  //   console.log("type:", type);
+  //   console.log("field:", field);
   let whereClause = "";
   switch (type) {
     case "esriFieldTypeDouble":
@@ -52,7 +52,9 @@ export function formatWhereClause(value: string, type: string, field: string) {
 export function extractAddressNumber(address: string): string {
   const addressParts = address.split(" ");
   if (addressParts[0] && isNumeric(addressParts[0])) {
-    return addressParts[0];
+    let addressNumber = addressParts[0];
+
+    return removeLeadingZeros(addressNumber).replace("00000", "0");
   }
   return "0";
 }
@@ -60,7 +62,7 @@ export function extractAddressNumber(address: string): string {
 export function extractFullSiteAddress(parcel: Parcel): string {
   return (
     parcel.attributes.siteadd ||
-    `${parcel.attributes.maddpref} ${parcel.attributes.saddpref} \
+    `${parcel.attributes.saddpref} \
     ${parcel.attributes.saddno} ${parcel.attributes.saddstr} \
     ${parcel.attributes.saddsttyp} ${parcel.attributes.saddstsuf}`
   );
@@ -73,4 +75,11 @@ export function replaceStringPlaceholders(
   return template.replace(/{(\w+)}/g, (match, key) => {
     return replacements[key] || match;
   });
+}
+
+export function removeLeadingZeros(str: string): string {
+  while (str.length > 1 && str.startsWith("0")) {
+    str = str.substring(1);
+  }
+  return str;
 }

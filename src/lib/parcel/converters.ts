@@ -1,6 +1,6 @@
 import { LatLngExpression } from "leaflet";
 import proj4 from "proj4";
-import { Ring } from "../types/Ring";
+import { Ring } from "../../types/Ring";
 
 export const convertCoordinates = (rings: Ring[]): LatLngExpression[] => {
   return rings.flatMap((ring) =>

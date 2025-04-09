@@ -15,14 +15,17 @@ function App() {
   };
 
   return (
-    <div>
-      <ParcelSearch setSelectedParcel={handleParcelSelect} />
-      <ParcelMap
-        selectedParcel={selectedParcel}
-        nearbyParcels={nearbyParcels}
-        setSelectedParcel={handleParcelSelect}
-      />
-    </div>
+    <>
+      <Analytics />
+      <div>
+        <ParcelSearch setSelectedParcel={handleParcelSelect} />
+        <ParcelMap
+          selectedParcel={selectedParcel}
+          nearbyParcels={nearbyParcels}
+          setSelectedParcel={handleParcelSelect}
+        />
+      </div>
+    </>
   );
 }
 
