@@ -1,7 +1,7 @@
 export const BASE_URL: string =
-  "https://services.nconemap.gov/secure/rest/services/NC1Map_Parcels/MapServer/1/query";
+  "https://services.nconemap.gov/secure/rest/services/NC1Map_Parcels/MapServer/0/query";
 export const METADATA_URL: string =
-  "https://services.nconemap.gov/secure/rest/services/NC1Map_Parcels/MapServer/1?f=json";
+  "https://services.nconemap.gov/secure/rest/services/NC1Map_Parcels/MapServer/0?f=json";
 export const DEFAULT_ZOOM: number = 14;
 export const MAX_ZOOM: number = 19;
 export const STARTING_COORDINATES: [number, number] = [35.7796, -78.6382];
