@@ -1,27 +1,17 @@
 import React, { useState } from "react";
 import { searchParcels } from "../api/ncParcels";
 import { PARCEL_FIELD_ALIASES } from "../lib/constants";
-import { getFieldData } from "../api/ncParcels";
 import { Parcel } from "../types/Parcel";
 import { Field } from "../types/Field";
 // @ts-ignore
-import loading from "../assets/loading.gif";
 
-const fieldTypes = new Set();
-let fieldData: Field[] = [];
-
-async function fetchFieldData() {
-  return await getFieldData();
-}
-
-fetchFieldData().then((data) => {
-  // Use fieldData inside your app
-  fieldData = data;
-});
-
-fieldData.forEach((field) => fieldTypes.add(field.type));
-
-const ParcelSearch = ({ setSelectedParcel }) => {
+const ParcelSearch = ({
+  fieldData,
+  setSelectedParcel,
+}: {
+  fieldData: Field[];
+  setSelectedParcel: (parcel: Parcel) => void;
+}) => {
   const [query, setQuery] = useState("");
   const [field, setField] = useState(Object.keys(PARCEL_FIELD_ALIASES)[0]);
   const [results, setResults] = useState([]);
@@ -46,7 +36,18 @@ const ParcelSearch = ({ setSelectedParcel }) => {
         setSearching(false);
         return;
       }
-      const parcels = await searchParcels(query, currentFieldData.type, field);
+      const queryResult = await searchParcels(
+        query,
+        currentFieldData.type,
+        field
+      );
+      if (typeof queryResult === "string") {
+        alert(queryResult);
+        setSearching(false);
+        return;
+      }
+      const parcels = queryResult;
+
       setResults(parcels);
     } catch (error) {
       console.error("Search failed:", error);
@@ -113,7 +114,12 @@ const ParcelSearch = ({ setSelectedParcel }) => {
       {searching && (
         <div className="loading">
           <p>Searching for parcels...</p>
-          <img src={loading} alt="loading..." />
+          <img
+            src={
+              "https://raw.githubusercontent.com/n3r4zzurr0/svg-spinners/abfa05c49acf005b8b1e0ef8eb25a67a7057eb20/svg-css/ring-resize.svg"
+            }
+            alt="loading..."
+          />
         </div>
       )}
     </div>

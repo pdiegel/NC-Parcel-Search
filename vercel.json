@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/ncparcels/(.*)",
+      "destination": "https://services.nconemap.gov/$1"
+    }
+  ]
+}

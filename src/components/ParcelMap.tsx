@@ -60,6 +60,10 @@ const MapZoomHandler = ({ selectedParcel }: { selectedParcel: Parcel }) => {
   return null;
 };
 
+const getFontSizeFromZoom = (zoom: number): number => {
+  return Math.max(0, LABEL_FONT_SIZE - (LABEL_FONT_SIZE - zoom) * 5);
+};
+
 const ParcelMap = ({
   selectedParcel,
   nearbyParcels,
@@ -117,8 +121,7 @@ const ParcelMap = ({
               <div key={`${parcel.attributes.parno}-${index}`}>
                 <ParcelLabel
                   parcel={parcel}
-                  labelFontSize={LABEL_FONT_SIZE}
-                  mapCurrentZoom={mapZoom}
+                  labelFontSize={getFontSizeFromZoom(mapZoom)}
                 />
                 <Polygon
                   key={index}
@@ -178,8 +181,7 @@ const ParcelMap = ({
             <MapZoomHandler selectedParcel={selectedParcel} />
             <ParcelLabel
               parcel={selectedParcel}
-              labelFontSize={LABEL_FONT_SIZE}
-              mapCurrentZoom={mapZoom}
+              labelFontSize={getFontSizeFromZoom(mapZoom)}
             />
             <Polygon
               ref={selectedParcelRef}

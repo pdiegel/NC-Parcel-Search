@@ -60,12 +60,12 @@ export function extractAddressNumber(address: string): string {
 }
 
 export function extractFullSiteAddress(parcel: Parcel): string {
-  return (
+  const fullSiteAddress =
     parcel.attributes.siteadd ||
     `${parcel.attributes.saddpref} \
     ${parcel.attributes.saddno} ${parcel.attributes.saddstr} \
-    ${parcel.attributes.saddsttyp} ${parcel.attributes.saddstsuf}`
-  );
+    ${parcel.attributes.saddsttyp} ${parcel.attributes.saddstsuf}`;
+  return fullSiteAddress.trim();
 }
 
 export function replaceStringPlaceholders(

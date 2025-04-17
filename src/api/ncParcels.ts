@@ -4,7 +4,6 @@ import { Parcel } from "../types/Parcel";
 import { Field } from "../types/Field";
 import { BASE_URL, METADATA_URL, PARCEL_OUTFIELDS } from "../lib/constants";
 
-// Function to search parcels by owner name or parcel number
 export const searchParcels = async (
   query: string,
   type: string,
@@ -27,7 +26,7 @@ export const searchParcels = async (
     return response.data.features || [];
   } catch (error) {
     console.error("API request failed:", error);
-    return [];
+    return error.message;
   }
 };
 
@@ -51,10 +50,9 @@ export const getFieldData = async (): Promise<Field[]> => {
   }
 };
 
-// Function to fetch nearby parcels
 export const getNearbyParcels = async (
   selectedParcel: Parcel,
-  bufferFeet: number = 2500
+  bufferFeet: number = 1000
 ) => {
   if (
     !selectedParcel ||
@@ -92,7 +90,7 @@ export const getNearbyParcels = async (
         spatialRel: "esriSpatialRelIntersects",
         outFields: PARCEL_OUTFIELDS,
         returnGeometry: true,
-        resultRecordCount: 400,
+        resultRecordCount: 1000,
       },
     });
 
@@ -103,7 +101,6 @@ export const getNearbyParcels = async (
 
     let parcels = response.data.features || [];
 
-    // 🔥 Filter out the selected parcel
     parcels = parcels.filter(
       (parcel) =>
         parcel.attributes.objectid !== selectedParcel.attributes.objectid

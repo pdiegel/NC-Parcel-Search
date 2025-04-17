@@ -15,7 +15,6 @@ html {
     --danger-color: #dc3545;
     --warning-color: #ffc107;
     --info-color: #17a2b8;
-
     --border-radius: 2px;
     --box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
     --default-transition: 0.3s;
@@ -25,6 +24,21 @@ html {
 
 body {
     overflow: hidden;
+    background-color: rgba(194, 194, 194, 0.5);
+}
+
+.loading-screen {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loading-screen img {
+    min-width: 100px;
+    width: 5vw;
+    height: auto;
 }
 
 /* Main Layout */
@@ -267,8 +281,7 @@ svg {
     list-style: none;
 }
 
-.leaflet-container svg,
 .leaflet-container text {
-    transition: font-size 500ms ease-out;
+    transition: font-size var(--default-transition);
     text-shadow: 1px 1px 4px rgba(48, 48, 48, 1);
 }
