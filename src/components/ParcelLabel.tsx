@@ -1,12 +1,8 @@
 import { SVGOverlay } from "react-leaflet";
 import { latLngBounds } from "leaflet";
 import React from "react";
-import { Parcel } from "../types/Parcel";
 import { convertCoordinates } from "../lib/parcel/converters";
-import {
-  extractAddressNumber,
-  extractFullSiteAddress,
-} from "../lib/parcel/formatHelpers";
+import { Parcel } from "../lib/parcel/Parcel";
 
 const ParcelLabel = ({
   parcel,
@@ -15,9 +11,8 @@ const ParcelLabel = ({
   parcel: Parcel;
   labelFontSize: number;
 }) => {
-  if (!parcel?.geometry?.rings) return null;
-
-  const bounds = latLngBounds(convertCoordinates(parcel.geometry.rings));
+  if (!parcel?.rings) return null;
+  const bounds = latLngBounds(convertCoordinates(parcel.rings));
 
   return (
     <SVGOverlay bounds={bounds} className="svg-holder">
@@ -29,7 +24,7 @@ const ParcelLabel = ({
         textAnchor="middle"
         dominantBaseline="middle"
       >
-        {extractAddressNumber(extractFullSiteAddress(parcel))}
+        {parcel.siteAddressNumber}
       </text>
     </SVGOverlay>
   );

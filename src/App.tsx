@@ -5,11 +5,15 @@ import { getFieldData, getNearbyParcels } from "./api/ncParcels";
 import { Analytics } from "@vercel/analytics/react";
 import { Field } from "./types/Field";
 import { motion, AnimatePresence } from "framer-motion";
+import { Parcel } from "./lib/parcel/Parcel";
+import { ParcelData } from "./types/ParcelData";
 
 function App() {
   const [fieldTypes, setFieldTypes] = useState([] as Field[]);
-  const [selectedParcel, setSelectedParcel] = useState(null);
-  const [nearbyParcels, setNearbyParcels] = useState([]);
+  const [selectedParcelData, setSelectedParcelData] = useState(
+    {} as ParcelData
+  );
+  const [nearbyParcels, setNearbyParcels] = useState([] as Parcel[]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -20,10 +24,11 @@ function App() {
     fetchData();
   }, []);
 
-  const handleParcelSelect = async (parcel) => {
-    setSelectedParcel(parcel);
+  const handleParcelSelect = async (parcel: ParcelData) => {
+    setSelectedParcelData(parcel);
     const nearby = await getNearbyParcels(parcel);
-    setNearbyParcels(nearby);
+    const newNearbyParcels = nearby.map((p: ParcelData) => new Parcel(p));
+    setNearbyParcels(newNearbyParcels);
   };
 
   const isLoading = !fieldTypes.length;
@@ -59,8 +64,13 @@ function App() {
               fieldData={fieldTypes}
               setSelectedParcel={handleParcelSelect}
             />
+
             <ParcelMap
-              selectedParcel={selectedParcel}
+              selectedParcel={
+                selectedParcelData?.attributes
+                  ? new Parcel(selectedParcelData)
+                  : null
+              }
               nearbyParcels={nearbyParcels}
               setSelectedParcel={handleParcelSelect}
             />

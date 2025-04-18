@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {
-  numToTwoDecimals,
-  extractFullSiteAddress,
-  replaceStringPlaceholders,
-} from "../lib/parcel/formatHelpers";
+import { replaceStringPlaceholders } from "../lib/parcel/formatHelpers";
 import { COUNTY_GIS_MAP } from "../lib/constants";
-import { Parcel } from "../types/Parcel";
+import { Parcel } from "../lib/parcel/Parcel";
 
 const SidePanel = ({ selectedParcel }: { selectedParcel: Parcel }) => {
   const [isOpen, setIsOpen] = useState(true);
@@ -30,51 +26,45 @@ const SidePanel = ({ selectedParcel }: { selectedParcel: Parcel }) => {
         <h2>Parcel Details</h2>
 
         <p>
-          <strong>Owner:</strong> {selectedParcel.attributes.ownname}
+          <strong>Owner:</strong> {selectedParcel.ownerName}
         </p>
         <p>
-          <strong>Site Address:</strong>{" "}
-          {extractFullSiteAddress(selectedParcel)}
+          <strong>Site Address:</strong> {selectedParcel.siteAddress}
         </p>
         <p>
-          <strong>Parcel ID:</strong>{" "}
-          {selectedParcel.attributes.parno ||
-            selectedParcel.attributes.altparno}
+          <strong>Parcel ID:</strong> {selectedParcel.validParcelNumber}
         </p>
-        {selectedParcel.attributes.altparno &&
-          selectedParcel.attributes.parno && (
+        {selectedParcel.validParcelNumber === selectedParcel.mainParcelNumber &&
+          selectedParcel.alternateParcelNumber && (
             <p>
               <strong>Alternate Parcel ID:</strong>{" "}
-              {selectedParcel.attributes.altparno}
+              {selectedParcel.alternateParcelNumber}
             </p>
           )}
         <p>
-          <strong>Acres:</strong>{" "}
-          {(selectedParcel.attributes.gisacres > 0 &&
-            numToTwoDecimals(selectedParcel.attributes.gisacres)) ||
-            numToTwoDecimals(selectedParcel.attributes.recareano)}
+          <strong>Acres:</strong> {selectedParcel.acreage}
         </p>
         <p>
-          <strong>County:</strong> {selectedParcel.attributes.cntyname}
+          <strong>County:</strong> {selectedParcel.county}
         </p>
 
-        {selectedParcel.attributes.sourceref && (
+        {selectedParcel.deedRef && (
           <p>
-            <strong>Source Ref:</strong> {selectedParcel.attributes.sourceref}
+            <strong>Source Ref:</strong> {selectedParcel.deedRef}
           </p>
         )}
 
-        {selectedParcel.attributes.mapref && (
+        {selectedParcel.platRef && (
           <p>
-            <strong>Map Ref:</strong> {selectedParcel.attributes.mapref}
+            <strong>Map Ref:</strong> {selectedParcel.platRef}
           </p>
         )}
 
-        {COUNTY_GIS_MAP[selectedParcel.attributes.cntyname] && (
+        {COUNTY_GIS_MAP[selectedParcel.county] && (
           <>
             <a
               href={replaceStringPlaceholders(
-                COUNTY_GIS_MAP[selectedParcel.attributes.cntyname],
+                COUNTY_GIS_MAP[selectedParcel.county],
                 selectedParcel.attributes
               )}
               target="_blank"

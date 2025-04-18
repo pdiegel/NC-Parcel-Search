@@ -1,6 +1,6 @@
 import axios from "axios";
 import { formatWhereClause } from "../lib/parcel/formatHelpers";
-import { Parcel } from "../types/Parcel";
+import { ParcelData } from "../types/ParcelData";
 import { Field } from "../types/Field";
 import { BASE_URL, METADATA_URL, PARCEL_OUTFIELDS } from "../lib/constants";
 
@@ -51,7 +51,7 @@ export const getFieldData = async (): Promise<Field[]> => {
 };
 
 export const getNearbyParcels = async (
-  selectedParcel: Parcel,
+  selectedParcel: ParcelData,
   bufferFeet: number = 1000
 ) => {
   if (

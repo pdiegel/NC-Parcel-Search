@@ -1,6 +1,6 @@
 import { Ring } from "./Ring";
 
-export type Parcel = {
+export type ParcelData = {
   attributes: { [key: string]: any };
   geometry: { rings: Ring[] };
 };

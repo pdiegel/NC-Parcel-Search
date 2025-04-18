@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { searchParcels } from "../api/ncParcels";
 import { PARCEL_FIELD_ALIASES } from "../lib/constants";
-import { Parcel } from "../types/Parcel";
+import { ParcelData } from "../types/ParcelData";
+import { Parcel } from "../lib/parcel/Parcel";
 import { Field } from "../types/Field";
 // @ts-ignore
 
@@ -10,11 +11,11 @@ const ParcelSearch = ({
   setSelectedParcel,
 }: {
   fieldData: Field[];
-  setSelectedParcel: (parcel: Parcel) => void;
+  setSelectedParcel: (parcel: ParcelData) => void;
 }) => {
   const [query, setQuery] = useState("");
   const [field, setField] = useState(Object.keys(PARCEL_FIELD_ALIASES)[0]);
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState([] as Parcel[]);
   const [searching, setSearching] = useState(false);
   const [numSearches, setNumSearches] = useState(0);
 
@@ -47,8 +48,9 @@ const ParcelSearch = ({
         return;
       }
       const parcels = queryResult;
+      const newParcels = parcels.map((parcel) => new Parcel(parcel));
 
-      setResults(parcels);
+      setResults(newParcels);
     } catch (error) {
       console.error("Search failed:", error);
       setResults([]);
@@ -96,15 +98,15 @@ const ParcelSearch = ({
             onClick={() => setSelectedParcel(parcel)}
             style={{ cursor: "pointer", color: "blue" }}
           >
-            {parcel.attributes.siteadd && (
+            {parcel.siteAddress && (
               <>
-                {parcel.attributes.siteadd}
+                {parcel.siteAddress}
                 <br />
               </>
             )}
-            PID: {parcel.attributes.parno || parcel.attributes.altparno}
+            PID: {parcel.validParcelNumber}
             <br />
-            Owner: {parcel.attributes.ownname}
+            Owner: {parcel.ownerName}
           </li>
         ))}
       </ul>
