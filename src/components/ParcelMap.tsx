@@ -2,13 +2,9 @@ import { MapContainer, Polygon, Popup, useMap } from "react-leaflet";
 import React, { useState, useEffect, useRef } from "react";
 import proj4 from "proj4";
 import { latLngBounds } from "leaflet";
-import {
-  numToTwoDecimals,
-  extractFullSiteAddress,
-  replaceStringPlaceholders,
-} from "../lib/parcel/formatHelpers";
+import { replaceStringPlaceholders } from "../lib/parcel/formatHelpers";
 import { COUNTY_GIS_MAP } from "../lib/constants";
-import { Parcel } from "../types/Parcel";
+import { Parcel } from "../lib/parcel/Parcel";
 import SidePanel from "./SidePanel";
 import { convertCoordinates } from "../lib/parcel/converters";
 import ParcelLabel from "./ParcelLabel";
@@ -49,10 +45,8 @@ const MapZoomHandler = ({ selectedParcel }: { selectedParcel: Parcel }) => {
   const map = useMap();
 
   useEffect(() => {
-    if (selectedParcel?.geometry?.rings) {
-      const polygonCoordinates = convertCoordinates(
-        selectedParcel.geometry.rings
-      );
+    if (selectedParcel?.rings) {
+      const polygonCoordinates = convertCoordinates(selectedParcel?.rings);
       map.fitBounds(latLngBounds(polygonCoordinates));
     }
   }, [selectedParcel, map]);
@@ -89,7 +83,7 @@ const ParcelMap = ({
 
   return (
     <>
-      {selectedParcel?.attributes?.parno && (
+      {selectedParcel?.validParcelNumber && (
         <SidePanel selectedParcel={selectedParcel} />
       )}
 
@@ -99,6 +93,7 @@ const ParcelMap = ({
           {Object.keys(tileLayers).map((layer) => (
             <li key={layer}>
               <button onClick={() => setTileLayer(layer)}>
+                {/* Capitalizing the layer/basemap names */}
                 {layer[0].toUpperCase() + layer.slice(1)}
               </button>
             </li>
@@ -117,47 +112,42 @@ const ParcelMap = ({
 
         {nearbyParcels.map(
           (parcel, index) =>
-            parcel.geometry?.rings && (
-              <div key={`${parcel.attributes.parno}-${index}`}>
+            parcel.rings && (
+              <div key={`${parcel.mainParcelNumber}-${index}`}>
                 <ParcelLabel
                   parcel={parcel}
                   labelFontSize={getFontSizeFromZoom(mapZoom)}
                 />
                 <Polygon
                   key={index}
-                  positions={convertCoordinates(parcel.geometry.rings)}
+                  positions={convertCoordinates(parcel.rings)}
                   color="#228B22"
                   weight={1}
                   fillOpacity={0.1}
                   smoothFactor={1}
                 >
                   <Popup>
-                    <strong>{parcel.attributes.ownname}</strong>
+                    <strong>{parcel.ownerName}</strong>
                     <br />
-                    Site Address:{" "}
-                    {extractFullSiteAddress(parcel) || "No Address Found"}
+                    Site Address: {parcel.siteAddress || "No Address Found"}
                     <br />
-                    Parcel ID:{" "}
-                    {parcel.attributes.parno || parcel.attributes.altparno}
+                    Parcel ID: {parcel.validParcelNumber}
                     <br />
-                    Acres:{" "}
-                    {(parcel.attributes.gisacres > 0 &&
-                      numToTwoDecimals(parcel.attributes.gisacres)) ||
-                      numToTwoDecimals(parcel.attributes.recareano)}
+                    Acres: {parcel.acreage ? parcel.acreage : "N/A"}
                     <br />
-                    County: {parcel.attributes.cntyname}
+                    County: {parcel.county}
                     <br />
-                    {parcel.attributes.sourceref && (
+                    {parcel.deedRef && (
                       <>
-                        {parcel.attributes.sourceref}
+                        {parcel.deedRef}
                         <br />
                       </>
                     )}
-                    {COUNTY_GIS_MAP[parcel.attributes.cntyname] && (
+                    {COUNTY_GIS_MAP[parcel.county] && (
                       <>
                         <a
                           href={replaceStringPlaceholders(
-                            COUNTY_GIS_MAP[parcel.attributes.cntyname],
+                            COUNTY_GIS_MAP[parcel.county],
                             parcel.attributes
                           )}
                           target="_blank"
