@@ -103,3 +103,72 @@ export const PARCEL_FIELD_ALIASES = {
   structyear: "Structure Year",
   ownname2: "Full Second Owner Name",
 };
+
+export const STREET_TYPES = new Set([
+  "AVE", // Avenue
+  "BLVD", // Boulevard
+  "CT", // Court
+  "DR", // Drive
+  "LN", // Lane
+  "RD", // Road
+  "ST", // Street
+  "PKWY", // Parkway
+  "CIR", // Circle
+  "WAY", // Way
+  "PL", // Place
+  "TERR", // Terrace
+  "HWY", // Highway
+  "CRES", // Crescent
+  "SQ", // Square
+  "LOOP", // Loop
+  "AVE.", // Avenue (alternative format with period)
+  "BLVD.", // Boulevard (alternative format with period)
+  "DR.", // Drive (alternative format with period)
+  "RD.", // Road (alternative format with period)
+  "ST.", // Street (alternative format with period)
+  "PKWY.", // Parkway (alternative format with period)
+  "CT.", // Court (alternative format with period)
+  "LN.", // Lane (alternative format with period)
+  "PL.", // Place (alternative format with period)
+  "TERR.", // Terrace (alternative format with period)
+  "CRES.", // Crescent (alternative format with period)
+  "SQ.", // Square (alternative format with period)
+  "RTE", // Route
+  "BND", // Bend
+  "TRL", // Trail
+  "MDW", // Meadow
+  "VW", // View
+  "GLN", // Glen
+  "CMN", // Common
+  "ESPL", // Esplanade
+  "BYP", // Bypass
+  "EXT", // Extension
+
+  // Full versions of the street types
+  "AVENUE",
+  "BOULEVARD",
+  "COURT",
+  "DRIVE",
+  "LANE",
+  "ROAD",
+  "STREET",
+  "PARKWAY",
+  "CIRCLE",
+  "WAY",
+  "PLACE",
+  "TERRACE",
+  "HIGHWAY",
+  "CRESCENT",
+  "SQUARE",
+  "LOOP",
+  "ROUTE",
+  "BEND",
+  "TRAIL",
+  "MEADOW",
+  "VIEW",
+  "GLEN",
+  "COMMON",
+  "ESPLANADE",
+  "BYPASS",
+  "EXTENSION",
+]);
