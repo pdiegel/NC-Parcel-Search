@@ -1,4 +1,4 @@
-import { ParcelData } from "../../types/ParcelData";
+import { STREET_TYPES } from "../constants";
 
 export function numToTwoDecimals(number: number) {
   return (Math.round(number * 100) / 100).toFixed(2);
@@ -21,7 +21,10 @@ export function formatWhereClause(value: string, type: string, field: string) {
       whereClause = `${field} = ${value}`; // Direct numeric match (without quotes)
       break;
     case "esriFieldTypeString":
-      whereClause = `UPPER(${field}) LIKE UPPER('%${value}%')`;
+      // Using a workaround due to inconsistent API data
+      whereClause = `UPPER(${field}) LIKE UPPER('%${value}%') OR UPPER(${field}) LIKE UPPER('%${normalizeClaytonSiteAddress(
+        value
+      )}%')`;
       break;
     case "esriFieldTypeDate":
       whereClause = `${field} = '${value}'`;
@@ -63,4 +66,32 @@ export function removeLeadingZeros(str: string): string {
     str = str.substring(1);
   }
   return str;
+}
+
+export function normalizeClaytonSiteAddress(address: string): string {
+  // in the API data, Town of Clayton has a unique site address spacing that needs to be normalized.
+  // i.e. "356 lassiter farms ln" should format to "356  LASSITER FARMS   LN"
+  address = address.toUpperCase().trim();
+  const addressParts = address.split(" ");
+  let normalizedAddress = "";
+
+  addressParts.forEach((part, index) => {
+    if (index === 0) {
+      normalizedAddress += part;
+      if (isNumeric(part)) {
+        // add an extra space if the first part is a number
+        normalizedAddress += " ";
+      }
+      return;
+    }
+
+    if (STREET_TYPES.has(part)) {
+      normalizedAddress += `   ${part}`;
+      return;
+    }
+
+    normalizedAddress += ` ${part}`;
+  });
+
+  return normalizedAddress;
 }
