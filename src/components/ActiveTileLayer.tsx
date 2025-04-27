@@ -1,8 +1,6 @@
 import React from "react";
 import { TileLayer } from "react-leaflet";
 
-// Define the available tile layers.
-
 export const tileLayers = {
   street: {
     url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",

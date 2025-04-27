@@ -90,7 +90,6 @@ export const getNearbyParcels = async (
         spatialRel: "esriSpatialRelIntersects",
         outFields: PARCEL_OUTFIELDS,
         returnGeometry: true,
-        resultRecordCount: 1000,
       },
     });
 

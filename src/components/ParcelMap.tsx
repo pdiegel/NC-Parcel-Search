@@ -1,4 +1,10 @@
-import { MapContainer, Polygon, Popup, useMap } from "react-leaflet";
+import {
+  MapContainer,
+  Polygon,
+  Popup,
+  useMap,
+  ZoomControl,
+} from "react-leaflet";
 import React, { useState, useEffect, useRef } from "react";
 import proj4 from "proj4";
 import { latLngBounds } from "leaflet";
@@ -15,6 +21,7 @@ import {
   STARTING_COORDINATES,
   LABEL_FONT_SIZE,
 } from "../lib/constants";
+import ParcelPopupInfo from "./ParcelPopupInfo";
 
 // Define NC State Plane (EPSG:102719 → EPSG:4326)
 proj4.defs(
@@ -32,9 +39,9 @@ const MapZoomTracker = ({
   useEffect(() => {
     const updateZoom = () => onZoomChange(map.getZoom());
     updateZoom(); // set initial zoom
-    map.on("zoomend", updateZoom);
+    map.on("zoom", updateZoom);
     return () => {
-      map.off("zoomend", updateZoom);
+      map.off("zoom", updateZoom);
     };
   }, [map, onZoomChange]);
 
@@ -88,11 +95,14 @@ const ParcelMap = ({
       )}
 
       <div className="layer-toggle">
-        <strong>Layer:</strong>
+        <h2>Basemap Layer</h2>
         <ul>
           {Object.keys(tileLayers).map((layer) => (
             <li key={layer}>
-              <button onClick={() => setTileLayer(layer)}>
+              <button
+                onClick={() => setTileLayer(layer)}
+                className={layer != tileLayer ? "secondary-btn" : ""}
+              >
                 {/* Capitalizing the layer/basemap names */}
                 {layer[0].toUpperCase() + layer.slice(1)}
               </button>
@@ -106,7 +116,9 @@ const ParcelMap = ({
         zoom={DEFAULT_ZOOM}
         maxZoom={MAX_ZOOM}
         style={{ height: "100vh", width: "100%" }}
+        zoomControl={false}
       >
+        <ZoomControl position="bottomright" />
         <MapZoomTracker onZoomChange={setMapZoom} />
         <ActiveTileLayer tileLayer={tileLayer} />
 
@@ -126,47 +138,16 @@ const ParcelMap = ({
                   fillOpacity={0.1}
                   smoothFactor={1}
                 >
-                  <Popup>
-                    <strong>{parcel.ownerName}</strong>
-                    <br />
-                    Site Address: {parcel.siteAddress || "No Address Found"}
-                    <br />
-                    Parcel ID: {parcel.validParcelNumber}
-                    <br />
-                    Acres: {parcel.acreage ? parcel.acreage : "N/A"}
-                    <br />
-                    County: {parcel.county}
-                    <br />
-                    {parcel.deedRef && (
-                      <>
-                        {parcel.deedRef}
-                        <br />
-                      </>
-                    )}
-                    {COUNTY_GIS_MAP[parcel.county] && (
-                      <>
-                        <a
-                          href={replaceStringPlaceholders(
-                            COUNTY_GIS_MAP[parcel.county],
-                            parcel.attributes
-                          )}
-                          target="_blank"
-                        >
-                          County GIS
-                        </a>
-                        <br />
-                      </>
-                    )}
-                    <button onClick={() => setSelectedParcel(parcel)}>
-                      Set Active
-                    </button>
-                  </Popup>
+                  <ParcelPopupInfo
+                    parcel={parcel}
+                    setSelectedParcel={setSelectedParcel}
+                  />
                 </Polygon>
               </div>
             )
         )}
 
-        {selectedParcel?.geometry?.rings && (
+        {selectedParcel?.rings && (
           <>
             <MapZoomHandler selectedParcel={selectedParcel} />
             <ParcelLabel
@@ -175,7 +156,7 @@ const ParcelMap = ({
             />
             <Polygon
               ref={selectedParcelRef}
-              positions={convertCoordinates(selectedParcel.geometry.rings)}
+              positions={convertCoordinates(selectedParcel.rings)}
               color="#6593B1"
               weight={3}
               smoothFactor={1}

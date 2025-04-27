@@ -1,6 +1,6 @@
 import { SVGOverlay } from "react-leaflet";
 import { latLngBounds } from "leaflet";
-import React from "react";
+import React, { useMemo } from "react";
 import { convertCoordinates } from "../lib/parcel/converters";
 import { Parcel } from "../lib/parcel/Parcel";
 
@@ -12,7 +12,11 @@ const ParcelLabel = ({
   labelFontSize: number;
 }) => {
   if (!parcel?.rings) return null;
-  const bounds = latLngBounds(convertCoordinates(parcel.rings));
+
+  const bounds = useMemo(() => {
+    const b = latLngBounds(convertCoordinates(parcel.rings));
+    return b;
+  }, [parcel.rings]);
 
   return (
     <SVGOverlay bounds={bounds} className="svg-holder">
@@ -30,9 +34,4 @@ const ParcelLabel = ({
   );
 };
 
-export default React.memo(ParcelLabel, (prev, next) => {
-  return (
-    prev.parcel.attributes.objectid === next.parcel.attributes.objectid &&
-    prev.labelFontSize === next.labelFontSize
-  );
-});
+export default ParcelLabel;

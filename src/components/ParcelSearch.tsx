@@ -4,7 +4,8 @@ import { PARCEL_FIELD_ALIASES } from "../lib/constants";
 import { ParcelData } from "../types/ParcelData";
 import { Parcel } from "../lib/parcel/Parcel";
 import { Field } from "../types/Field";
-// @ts-ignore
+import DownArrowIcon from "./Icons/DownArrowIcon";
+import UpArrowIcon from "./Icons/UpArrowIcon";
 
 const ParcelSearch = ({
   fieldData,
@@ -18,6 +19,7 @@ const ParcelSearch = ({
   const [results, setResults] = useState([] as Parcel[]);
   const [searching, setSearching] = useState(false);
   const [numSearches, setNumSearches] = useState(0);
+  const [isOpen, setIsOpen] = useState(true);
 
   const handleSearch = async () => {
     if (!query.trim() || !field) {
@@ -67,7 +69,10 @@ const ParcelSearch = ({
   };
 
   return (
-    <div className="search-container">
+    <div className={`search-container ${isOpen ? "" : "closed"}`}>
+      <button className="search-toggle" onClick={() => setIsOpen(!isOpen)}>
+        {isOpen ? <UpArrowIcon /> : <DownArrowIcon />}
+      </button>
       <h2>NC Parcel Finder</h2>
       <div className="search-bar">
         <select
@@ -93,14 +98,10 @@ const ParcelSearch = ({
 
       <ul className="search-results">
         {results.map((parcel: Parcel, index) => (
-          <li
-            key={index}
-            onClick={() => setSelectedParcel(parcel)}
-            style={{ cursor: "pointer", color: "blue" }}
-          >
+          <li key={index} onClick={() => setSelectedParcel(parcel)}>
             {parcel.siteAddress && (
               <>
-                {parcel.siteAddress}
+                Address: {parcel.siteAddress}
                 <br />
               </>
             )}

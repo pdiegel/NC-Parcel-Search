@@ -84,7 +84,7 @@ export const COUNTY_GIS_MAP = {
 };
 
 export const PARCEL_FIELD_ALIASES = {
-  parno: "Parcel Number (PIN)",
+  parno: "Parcel Number (PID)",
   ownname: "Owner Name",
   parval: "Parcel Value",
   siteadd: "Full Site Address",
