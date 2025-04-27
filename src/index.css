@@ -215,12 +215,8 @@ button:hover {
 /* Side Panel */
 .side-panel {
     font-size: var(--regular-font-size);
-    width: auto;
-    /* Allow the side panel to grow based on its content */
     min-width: 250px;
-    /* Set a minimum width */
     max-width: 350px;
-    /* Set a maximum width */
     background: var(--white);
     position: absolute;
     right: 0;
@@ -233,7 +229,6 @@ button:hover {
     cursor: auto;
     display: flex;
     flex-direction: column;
-    flex-wrap: nowrap;
     gap: var(--default-margin);
     border: 1px solid var(--light-gray-text);
 }
@@ -241,21 +236,14 @@ button:hover {
 .side-panel ul {
     display: flex;
     flex-direction: column;
-    /* The vertical layout of the ul */
     gap: var(--default-margin);
-    align-items: flex-start;
-    /* Ensure items are aligned to the left */
-    width: auto;
-    /* Ensure ul grows based on content */
+
 }
 
 .side-panel ul li {
     display: flex;
     gap: var(--default-padding);
-    white-space: normal;
-    /* Ensure text inside li can wrap */
-    width: auto;
-    /* Allow li to grow based on content */
+    white-space: nowrap;
 }
 
 .side-panel .parcel-info .svg-container {
@@ -268,44 +256,21 @@ button:hover {
     background-color: var(--light-gray);
 }
 
-/* Close Button */
-.side-panel .close-btn {
-    position: absolute;
-    top: var(--default-margin);
-    right: var(--default-margin);
-    font-size: 1.5rem;
-    border: none;
-    background: none;
-    cursor: pointer;
-    transition: transform var(--default-transition);
-}
-
-.side-panel .close-btn:hover {
-    transform: scale(1.2);
-}
-
 /* Side Panel Content */
-.side-panel .parcel-detail {
-    display: flex;
-    flex-direction: column;
-    white-space: nowrap;
-}
-
 .side-panel .parcel-detail p {
+    display: flex;
     font-size: var(--subtext-font-size);
     color: var(--light-gray-text);
 }
 
 /* Action Button */
 .side-panel a {
-    display: inline-block;
     color: var(--white);
     text-decoration: none;
     background-color: var(--black);
     text-align: center;
     padding: var(--default-padding);
     border-radius: var(--border-radius);
-    border: 1px solid transparent;
     transition: background-color var(--default-transition), transform var(--default-transition);
     cursor: pointer;
 }
@@ -475,15 +440,8 @@ svg {
     margin: calc(var(--default-margin)/2) 0;
 }
 
-
 .parcel-popup li {
-    display: flex;
-    gap: var(--default-padding);
-    white-space: nowrap;
-    width: auto;
-    justify-content: space-between;
-    align-items: center;
-    /* Allow li to grow based on content */
+    list-style: none;
 }
 
 .parcel-popup p {

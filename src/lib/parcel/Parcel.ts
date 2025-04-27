@@ -69,9 +69,15 @@ export class Parcel {
     return this.attributes.sourceref.trim();
   }
   get deedBook() {
+    if (!this.deedRef.includes("/")) {
+      return removeLeadingZeros(this.deedRef.trim());
+    }
     return removeLeadingZeros(this.deedRef.split("/")[0].trim());
   }
   get deedPage() {
+    if (!this.deedRef.includes("/")) {
+      return "";
+    }
     return removeLeadingZeros(this.deedRef.split("/")[1].trim());
   }
   get platRef() {
@@ -94,9 +100,15 @@ export class Parcel {
     return this.attributes.mapref.trim();
   }
   get platBook() {
+    if (!this.platRef.includes("/")) {
+      return removeLeadingZeros(this.platRef.trim());
+    }
     return removeLeadingZeros(this.platRef.split("/")[0].trim());
   }
   get platPage() {
+    if (!this.platRef.includes("/")) {
+      return "";
+    }
     return removeLeadingZeros(this.platRef.split("/")[1].trim());
   }
   get acreage() {
